@@ -9,7 +9,9 @@ export const CaptionLine: React.FC<{
   text: string;
   bottom?: number;
   size?: number;
-}> = ({local, duration, text, bottom = 210, size = 44}) => {
+  /** Flip to dark type for shots with a bright sky. */
+  tone?: 'light' | 'dark';
+}> = ({local, duration, text, bottom = 210, size = 44, tone = 'light'}) => {
   const inO = interpolate(local, [0, 22], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -36,8 +38,11 @@ export const CaptionLine: React.FC<{
         fontFamily: serif,
         fontSize: size,
         letterSpacing: track,
-        color: '#e6f0e2',
-        textShadow: '0 4px 30px rgba(0,0,0,0.9)',
+        color: tone === 'dark' ? '#1a2620' : '#e6f0e2',
+        textShadow:
+          tone === 'dark'
+            ? '0 1px 18px rgba(255,255,255,0.75)'
+            : '0 4px 30px rgba(0,0,0,0.9)',
       }}
     >
       {text}
@@ -46,7 +51,19 @@ export const CaptionLine: React.FC<{
 };
 
 /** The logo lockup: gold-swept wordmark, rule, subtitle. */
-export const MainTitle: React.FC<{local: number}> = ({local}) => {
+export const MainTitle: React.FC<{
+  local: number;
+  title?: string;
+  subtitle?: string;
+  tag?: string;
+  size?: number;
+}> = ({
+  local,
+  title = 'Рыцарь-Лягушка',
+  subtitle = 'Легенда болотного королевства',
+  tag = 'Скоро',
+  size = 132,
+}) => {
   const reveal = interpolate(local, [4, 40], [0, 1], {
     extrapolateLeft: 'clamp',
     extrapolateRight: 'clamp',
@@ -87,26 +104,34 @@ export const MainTitle: React.FC<{local: number}> = ({local}) => {
         gap: 26,
       }}
     >
+      {/* Compositing properties live on the wrapper: with opacity, transform
+          and filter on the same element, Chromium stops honouring
+          background-clip:text and paints the gradient box instead. */}
       <div
         style={{
-          fontFamily: serif,
-          fontSize: 132,
-          fontWeight: 700,
-          letterSpacing: track,
-          textTransform: 'uppercase',
           opacity: reveal,
           transform: `scale(${interpolate(reveal, [0, 1], [1.08, 1])})`,
-          background: `linear-gradient(100deg, ${palette.goldDeep} ${sweep - 34}%, #fff3c9 ${sweep}%, ${palette.gold} ${
-            sweep + 22
-          }%, ${palette.goldDeep} ${sweep + 60}%)`,
-          WebkitBackgroundClip: 'text',
-          backgroundClip: 'text',
-          color: 'transparent',
           filter: 'drop-shadow(0 6px 40px rgba(0,0,0,0.85))',
-          whiteSpace: 'nowrap',
         }}
       >
-        Рыцарь-Лягушка
+        <div
+          style={{
+            fontFamily: serif,
+            fontSize: size,
+            fontWeight: 700,
+            letterSpacing: track,
+            textTransform: 'uppercase',
+            background: `linear-gradient(100deg, ${palette.goldDeep} ${sweep - 34}%, #fff3c9 ${sweep}%, ${palette.gold} ${
+              sweep + 22
+            }%, ${palette.goldDeep} ${sweep + 60}%)`,
+            WebkitBackgroundClip: 'text',
+            backgroundClip: 'text',
+            color: 'transparent',
+            whiteSpace: 'nowrap',
+          }}
+        >
+          {title}
+        </div>
       </div>
 
       <div
@@ -127,7 +152,7 @@ export const MainTitle: React.FC<{local: number}> = ({local}) => {
           opacity: subO,
         }}
       >
-        Легенда болотного королевства
+        {subtitle}
       </div>
 
       <div
@@ -141,7 +166,7 @@ export const MainTitle: React.FC<{local: number}> = ({local}) => {
           opacity: tagO,
         }}
       >
-        Скоро
+        {tag}
       </div>
     </div>
   );

@@ -7,14 +7,17 @@ import {palette} from '../theme';
  * frequencies are whole multiples of the tile width, so tiles butt together
  * without a visible seam.
  */
-function ridgeLine(
+export function ridgeLine(
   tileW: number,
   base: number,
   waves: [freq: number, amp: number, phase: number][]
 ): string {
-  const step = tileW / 48;
+  // Step by index, not by accumulating a float: accumulating drops the last
+  // sample short of tileW, which leaves an unfilled wedge at every tile edge.
+  const steps = 48;
   const pts: string[] = [];
-  for (let x = 0; x <= tileW; x += step) {
+  for (let i = 0; i <= steps; i++) {
+    const x = (i / steps) * tileW;
     let y = base;
     for (const [f, amp, phase] of waves) {
       y -= Math.sin((x / tileW) * Math.PI * 2 * f + phase) * amp;
@@ -25,7 +28,7 @@ function ridgeLine(
 }
 
 /** The same ridge, closed off at the bottom so it can be filled. */
-function ridgePath(
+export function ridgePath(
   tileW: number,
   height: number,
   base: number,
@@ -34,7 +37,7 @@ function ridgePath(
   return `M 0 ${height} L ${ridgeLine(tileW, base, waves).slice(2)} L ${tileW} ${height} Z`;
 }
 
-type BandProps = {
+export type BandProps = {
   offset: number;
   tileW: number;
   children: React.ReactNode;
@@ -43,7 +46,7 @@ type BandProps = {
 };
 
 /** Repeats one tile three times and slides it, giving an endless band. */
-const Band: React.FC<BandProps> = ({offset, tileW, children, bottom, height}) => {
+export const Band: React.FC<BandProps> = ({offset, tileW, children, bottom, height}) => {
   const shift = -(((offset % tileW) + tileW) % tileW);
   return (
     <div style={{position: 'absolute', left: 0, right: 0, bottom, height, overflow: 'visible'}}>
@@ -54,7 +57,9 @@ const Band: React.FC<BandProps> = ({offset, tileW, children, bottom, height}) =>
             position: 'absolute',
             left: shift + i * tileW,
             bottom: 0,
-            width: tileW,
+            // One pixel of overlap: a fractional scroll offset would otherwise
+            // let the background show through as a vertical seam.
+            width: tileW + 1,
             height,
           }}
         >
@@ -72,6 +77,8 @@ export type EnvironmentProps = {
   /** Overall haze/mist strength, 0..1. */
   mist?: number;
   moonY?: number;
+  /** Draw the near bank; off when a scene supplies its own foreground. */
+  showBank?: boolean;
 };
 
 export const Environment: React.FC<EnvironmentProps> = ({
@@ -79,6 +86,7 @@ export const Environment: React.FC<EnvironmentProps> = ({
   frame,
   mist = 1,
   moonY = 210,
+  showBank = true,
 }) => {
   const farHills = ridgePath(1200, 320, 190, [
     [1, 46, 0.4],
@@ -118,9 +126,11 @@ export const Environment: React.FC<EnvironmentProps> = ({
           width: 1400,
           height: 1400,
           borderRadius: '50%',
-          background: `radial-gradient(circle, rgba(214,240,205,${0.22 * mist}) 0%, rgba(170,210,190,${
-            0.1 * mist
-          }) 16%, rgba(120,170,150,${0.05 * mist}) 34%, rgba(120,170,150,0) 62%)`,
+          background: `radial-gradient(circle, rgba(214,240,205,${0.22 * mist}) 0%, rgba(180,216,196,${
+            0.09 * mist
+          }) 18%, rgba(140,186,166,${0.035 * mist}) 38%, rgba(120,170,150,${
+            0.012 * mist
+          }) 62%, rgba(120,170,150,0) 100%)`,
         }}
       />
       {/* moon */}
@@ -138,14 +148,14 @@ export const Environment: React.FC<EnvironmentProps> = ({
 
       {/* far ridge */}
       <Band offset={scroll * 0.08} tileW={1200} bottom={330} height={320}>
-        <svg viewBox="0 0 1200 320" width="1200" height="320" preserveAspectRatio="none">
+        <svg viewBox="0 0 1200 320" width="100%" height="100%" preserveAspectRatio="none">
           <path d={farHills} fill="#12303a" opacity={0.85} />
         </svg>
       </Band>
 
       {/* mid ridge with a dead tree line */}
       <Band offset={scroll * 0.2} tileW={900} bottom={300} height={300}>
-        <svg viewBox="0 0 900 300" width="900" height="300" preserveAspectRatio="none">
+        <svg viewBox="0 0 900 300" width="100%" height="100%" preserveAspectRatio="none">
           <path d={midHills} fill="#0c2028" />
           {[80, 300, 520, 760].map((x, i) => (
             <g key={x} transform={`translate(${x} ${168 - i * 4})`} opacity={0.9}>
@@ -207,12 +217,14 @@ export const Environment: React.FC<EnvironmentProps> = ({
       })}
 
       {/* the bank the horse runs along */}
+      {showBank ? (
       <Band offset={scroll * 0.85} tileW={800} bottom={0} height={330}>
-        <svg viewBox="0 0 800 330" width="800" height="330" preserveAspectRatio="none">
+        <svg viewBox="0 0 800 330" width="100%" height="100%" preserveAspectRatio="none">
           <path d={bank} fill="#071016" />
           <path d={bankEdge} fill="none" stroke="rgba(150, 196, 178, 0.30)" strokeWidth={2.5} />
         </svg>
       </Band>
+      ) : null}
 
       {/* ground fog rolling over the water line */}
       {[0, 1, 2].map((i) => (
@@ -267,7 +279,7 @@ export const Reeds: React.FC<{scroll: number; frame: number; count?: number}> = 
   const tileW = 1400;
   return (
     <Band offset={scroll * 1.9} tileW={tileW} bottom={-60} height={520}>
-      <svg viewBox={`0 0 ${tileW} 520`} width={tileW} height={520} overflow="visible">
+      <svg viewBox={`0 0 ${tileW} 520`} width="100%" height="100%" preserveAspectRatio="none" overflow="visible">
         {Array.from({length: count}).map((_, i) => {
           const x = (i / count) * tileW + random(`reedx${i}`) * 60;
           const h = 250 + random(`reedh${i}`) * 250;

@@ -1,14 +1,15 @@
 {
   "name": "frog-knight-teaser",
   "version": "1.0.0",
-  "description": "15-second Remotion teaser: the Frog Knight rides",
+  "description": "Remotion films: the Frog Knight teaser and Act I of Larry Toad",
   "scripts": {
     "dev": "remotion studio",
     "studio": "remotion studio",
     "build": "remotion render FrogKnightTeaser out/frog-knight-teaser.mp4 --codec=h264 --crf=17",
     "still": "remotion still FrogKnightTeaser out/still.png",
     "typecheck": "tsc --noEmit",
-    "audio": "node scripts/make-audio.mjs"
+    "audio": "node scripts/make-audio.mjs && node scripts/make-act1-audio.mjs",
+    "build:act1": "remotion render Act1Birth out/act1-birth.mp4 --codec=h264 --crf=17"
   },
   "repository": {
     "type": "git",

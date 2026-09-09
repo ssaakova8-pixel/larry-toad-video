@@ -30,15 +30,16 @@ export const FrogHead: React.FC<FrogHeadProps> = ({
     <g>
       {helmet ? (
         <>
-          {/* plume streaming back off the crest */}
+          {/* plume streaming back off the crest — kept short and full so it
+              still reads as a plume when the character is a silhouette */}
           <path
-            d={`M -24 -44 C ${-52 + w * 4} ${-60 - w * 3}, ${-84 - w * 3} ${-50 + w * 4}, ${-112 - w * 2} ${-20 + w * 6}
-                C ${-86 - w * 2} ${-34 + w * 3}, ${-56 + w * 3} ${-34 - w * 2}, -28 -30 Z`}
+            d={`M -24 -46 C ${-50 + w * 4} ${-66 - w * 3}, ${-76 - w * 3} ${-58 + w * 4}, ${-94 - w * 2} ${-26 + w * 5}
+                C ${-82 - w * 2} ${-46 + w * 3}, ${-56 + w * 3} ${-42 - w * 2}, -26 -18 Z`}
             fill={palette.crimson}
           />
           <path
-            d={`M -24 -42 C ${-48 + w * 4} ${-54 - w * 3}, ${-74 - w * 3} ${-44 + w * 4}, ${-98 - w * 2} ${-22 + w * 5}
-                C ${-76 - w * 2} ${-32 + w * 3}, ${-50 + w * 3} ${-32 - w * 2}, -28 -28 Z`}
+            d={`M -26 -42 C ${-48 + w * 4} ${-58 - w * 3}, ${-70 - w * 3} ${-52 + w * 4}, ${-84 - w * 2} ${-28 + w * 4}
+                C ${-74 - w * 2} ${-42 + w * 3}, ${-52 + w * 3} ${-40 - w * 2}, -26 -24 Z`}
             fill={palette.crimsonDark}
             opacity={0.75}
           />
