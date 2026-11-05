@@ -9,4 +9,16 @@
 - `src/` — исходники (порядок склейки в `order.txt`), `build.py` — сборка, `tools/` — тесты и ботов-прохождения.
 - `voice/lines.json` — все реплики, `voice/vbuild.py` — озвучка и проверка распознаванием.
 
+## Сборка и проверка
+
+```bash
+python3 build.py out/full.html full   # полная версия (как docs/index.html)
+python3 build.py out/lite.html lite   # лёгкая (как docs/lite.html)
+```
+
+Шапка со шрифтами (`../x/head.html`), музыка и голоса в git отдельно не хранятся: при первой сборке `tools/unpack.py` сам достаёт их из готовых `docs/*.html`. Сборка из `src/` даёт файл, побайтно совпадающий с `docs/`.
+
+- `node tools/chainflow.js $PWD/out/lite.html` — проходит всю Сказку от пролога до финала и проверяет, что нигде нет тупика.
+- `node tools/storysim.js 3` — боты разного умения проходят все 15 этапов (симуляция без графики, `tools/simload.js`).
+
 Лицензии звука — в `../NOTICE.md`.

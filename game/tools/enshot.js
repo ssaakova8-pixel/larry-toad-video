@@ -1,5 +1,5 @@
 // node enshot.js file.html out_prefix WxH kind[,kind..] [ch] — ставит нового бойца рядом с героем и снимает кадры
-const {chromium}=require('/opt/npm-tools/node_modules/playwright');
+const {chromium}=require('playwright');
 (async()=>{
  const [file,pre,vp,kinds,ch='3']=process.argv.slice(2);const [w,h]=vp.split('x').map(Number);
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium',args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});

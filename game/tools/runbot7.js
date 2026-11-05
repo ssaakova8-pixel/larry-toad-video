@@ -1,5 +1,5 @@
 process.env.V4SRC=require('path').join(__dirname,'..','src');
-const {load,SIMFILES}=require('../../tools/simload');
+const {load,SIMFILES}=require('./simload');
 const botSrc=require('./bot7');
 const ctx=load(SIMFILES);
 require('vm').runInContext(botSrc,ctx);

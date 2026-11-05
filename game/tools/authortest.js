@@ -1,4 +1,4 @@
-const {chromium}=require('/opt/npm-tools/node_modules/playwright');
+const {chromium}=require('playwright');
 (async()=>{
  const file=process.argv[2];
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium',args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});

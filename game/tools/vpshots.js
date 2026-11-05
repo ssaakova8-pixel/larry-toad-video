@@ -1,5 +1,5 @@
 // node vpshots.js file outdir — снимает ключевые экраны на разных экранах
-const {chromium}=require('/opt/npm-tools/node_modules/playwright');
+const {chromium}=require('playwright');
 (async()=>{const [file,out]=process.argv.slice(2);
  const VP=[[320,568],[844,390],[768,1024],[1920,1080]];
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium',args:['--no-sandbox']});

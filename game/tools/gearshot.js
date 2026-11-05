@@ -1,5 +1,5 @@
 // node gearshot.js file out WxH ch pg
-const {chromium}=require('/opt/npm-tools/node_modules/playwright');
+const {chromium}=require('playwright');
 (async()=>{const [file,out,vp,ch,pg]=process.argv.slice(2);const [w,h]=vp.split('x').map(Number);
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium',args:['--no-sandbox']});
  const p=await b.newPage({viewport:{width:w,height:h},deviceScaleFactor:1,hasTouch:true});

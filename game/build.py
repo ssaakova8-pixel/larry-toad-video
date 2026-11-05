@@ -2,6 +2,9 @@
 # Сборка одного html: шапка со шрифтами + (музыка/голоса base64) + код из src/ в заданном порядке.
 import sys, os, re
 SP=os.path.dirname(os.path.abspath(__file__))
+# шапка и медиа не хранятся в git отдельно: если их нет, достаём из готовых docs/*.html
+if not all(os.path.exists(os.path.join(SP,f)) for f in ('../x/head.html','media_full.idx.js','media_lite.idx.js')):
+    import subprocess; subprocess.check_call([sys.executable,os.path.join(SP,'tools','unpack.py')])
 ORDER=[l.strip() for l in open(os.path.join(SP,'order.txt'),encoding='utf8') if l.strip() and not l.startswith('#')]
 mode=sys.argv[2] if len(sys.argv)>2 else 'dev'
 out=sys.argv[1] if len(sys.argv)>1 else os.path.join(SP,'out','dev.html')

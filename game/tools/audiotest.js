@@ -1,5 +1,5 @@
 // Проверка звука в настоящем браузере: разблокировка, декодирование всех треков и голосов, реальный сигнал на выходе.
-const {chromium}=require('/opt/npm-tools/node_modules/playwright');
+const {chromium}=require('playwright');
 const fs=require('fs');
 (async()=>{
  const file=process.argv[2];

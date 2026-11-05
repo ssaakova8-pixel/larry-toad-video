@@ -1,5 +1,5 @@
 // Проходит всю цепочку Сказки по интерфейсу: сцены листаются, этапы и головоломки завершаются принудительно. Проверяет порядок событий и что нигде нет тупика.
-const {chromium}=require('/opt/npm-tools/node_modules/playwright');
+const {chromium}=require('playwright');
 (async()=>{
  const file=process.argv[2],vp=(process.argv[3]||'390x844').split('x').map(Number),start=+process.argv[4]||0;
  const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium',args:['--no-sandbox','--autoplay-policy=no-user-gesture-required']});
